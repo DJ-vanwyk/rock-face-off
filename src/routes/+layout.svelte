@@ -34,7 +34,7 @@
 					</svelte:fragment>
 					<span class="text-sm">Home</span>
 				</TabAnchor>
-				<TabAnchor href="/" selected={$page.url.pathname === '/profile'}>
+				<TabAnchor href="/competitions" selected={$page.url.pathname === '/competitions'}>
 					<svelte:fragment slot="lead">
 						<div class="flex justify-center pt-1">
 							<Icon icon="ion:trophy" class="text-2xl text-center" />
@@ -42,14 +42,7 @@
 					</svelte:fragment>
 					<span class="text-sm">Comps</span>
 				</TabAnchor>
-				<TabAnchor href="/" selected={$page.url.pathname === '/profile'}>
-					<svelte:fragment slot="lead">
-						<div class="flex justify-center pt-1">
-							<Icon icon="ion:person" class="text-2xl text-center" />
-						</div>
-					</svelte:fragment>
-					<span class="text-sm">Profile</span>
-				</TabAnchor>
+
 				<TabAnchor href="/" selected={$page.url.pathname === '/profile'}>
 					<!-- <svelte:fragment slot="lead">
 						<div class="flex justify-center pt-1">
@@ -64,7 +57,6 @@
 							class="text-white"
 						/>
 					</div>
-					<!-- <span class="text-sm">Profile</span> -->
 				</TabAnchor>
 
 				<!-- ... -->
