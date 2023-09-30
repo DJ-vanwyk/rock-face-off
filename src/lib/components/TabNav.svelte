@@ -19,7 +19,7 @@
 				<Icon icon="ion:home" class="text-2xl text-center" />
 			</div>
 		</svelte:fragment>
-		<span class="text-xs">Home</span>
+		<!-- <span class="text-xs">Home</span> -->
 	</TabAnchor>
 	<TabAnchor href="/competitions" selected={$page.url.pathname === '/competitions'}>
 		<svelte:fragment slot="lead">
@@ -27,7 +27,7 @@
 				<Icon icon="ion:trophy" class="text-2xl text-center" />
 			</div>
 		</svelte:fragment>
-		<span class="text-xs">Comps</span>
+		<!-- <span class="text-xs">Comps</span> -->
 	</TabAnchor>
 	<TabAnchor href="/competitions" selected={$page.url.pathname === '/gyms'}>
 		<svelte:fragment slot="lead">
@@ -35,7 +35,7 @@
 				<Icon icon="map:gym" class="text-2xl text-center" />
 			</div>
 		</svelte:fragment>
-		<span class="text-xs">Gyms</span>
+		<!-- <span class="text-xs">Gyms</span> -->
 	</TabAnchor>
 
 	<TabAnchor href="/" selected={$page.url.pathname === '/profile'}>
