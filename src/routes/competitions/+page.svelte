@@ -1,8 +1,5 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import type { PageData } from './$types';
-
-	export let data: PageData;
 </script>
 
 <div class="p-4">

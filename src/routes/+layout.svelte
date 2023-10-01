@@ -1,19 +1,38 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell } from '@skeletonlabs/skeleton';
+	import { AppShell, Modal, type ModalComponent } from '@skeletonlabs/skeleton';
+	import { initializeStores } from '@skeletonlabs/skeleton';
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+
 	import Auth from '$lib/components/auth/Auth.svelte';
 	import TabNav from '$lib/components/TabNav.svelte';
 	import { pageScrollStore } from '$lib/stores/pageScroll.store';
+	import ModalSelectList from '$lib/components/ModalSelectList.svelte';
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
+	// Modal Init
+	initializeStores();
+
+	// Custom Modal Registry
+	const modalComponentRegistry: Record<string, ModalComponent> = {
+		selectComponent: {
+			// Pass a reference to your custom component
+			ref: ModalSelectList
+		}
+	};
+
+	// Capture scroll event
 	function onPageScroll(e: Event) {
 		$pageScrollStore = (e.target as HTMLDivElement).scrollTop;
 	}
 </script>
+
+<!-- Modal -->
+<Modal components={modalComponentRegistry} />
 
 <!-- App Shell -->
 <Auth>

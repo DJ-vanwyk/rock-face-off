@@ -49,7 +49,8 @@
 
 	<div class="overflow-auto no-scrollbar snap-x">
 		<div class="flex w-fit gap-3 overflow-clip">
-			<div
+			<a
+				href="/competitions/123/scoreboard"
 				class="card h-56 variant-filled-tertiary mb-4 w-52 card-hover snap-start overflow-hidden"
 			>
 				<img
@@ -57,7 +58,7 @@
 					alt=""
 					class="object-fit w-full h-full"
 				/>
-			</div>
+			</a>
 			<div class="card h-56 variant-filled-tertiary mb-4 w-52 card-hover snap-start" />
 			<div class="card h-56 variant-filled-tertiary mb-4 w-52 card-hover snap-start" />
 			<div class="card h-56 variant-filled-tertiary mb-4 w-52 card-hover snap-start" />
