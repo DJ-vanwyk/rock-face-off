@@ -17,6 +17,8 @@
 	function onLogout() {
 		signOut(auth);
 	}
+
+	$: console.log($userStore);
 </script>
 
 <Restricted>
@@ -26,7 +28,11 @@
 	</PageHeader> -->
 
 	<div class="flex justify-center items-center p-4 flex-col gap-4">
-		<Avatar initials={$userStore?.displayName ?? ''} width="w-32" />
+		<Avatar
+			initials={$userStore?.displayName ?? ''}
+			width="w-32"
+			src={$userStore?.photoURL ?? ''}
+		/>
 		<h2 class="text-2xl font-bold">{$userStore?.displayName}</h2>
 	</div>
 	<div class="p-4">
