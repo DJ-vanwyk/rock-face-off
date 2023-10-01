@@ -1,4 +1,5 @@
 export interface Competition {
+	id?: string;
 	name: string;
 	description: string;
 	climbingType: 'Boulder' | 'Top Rope' | 'Lead';
@@ -11,4 +12,5 @@ export interface Competition {
 		uid: string;
 		displayName: string;
 	};
+	searchText: string[];
 }

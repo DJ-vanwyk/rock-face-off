@@ -6,37 +6,26 @@
 	import { AppBar } from '@skeletonlabs/skeleton';
 	import { collection, doc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
 	import { onMount } from 'svelte';
+	import type { Competition } from './new/types';
+	import { goto } from '$app/navigation';
 
-	const q = query(collection(db, 'competitions'));
+	const q = query(collection(db, 'competitions'), orderBy('startDate', 'asc'));
+
+	let comps: Competition[] = [];
 
 	onMount(async () => {
 		const querySnapshot = await getDocs(q);
 		querySnapshot.forEach((doc) => {
 			// doc.data() is never undefined for query doc snapshots
-			console.log(doc.id, ' => ', doc.data());
+			comps = [...comps, { ...(doc.data() as Competition), id: doc.id }];
 		});
 	});
 
-	function generateSearchArr(term: string): string[] {
-		term = term.toLowerCase();
-		const searchArr = [];
-		for (let i = 0; i <= term.length; i++) {
-			for (let j = i + 1; j <= term.length; j++) {
-				searchArr.push(term.slice(i, j));
+	function onCompClick(comp: Competition) {
+		goto(`/competitions/${comp.id}`, {
+			state: {
+				competition: comp
 			}
-		}
-		// return searchArr;
-		return [...new Set(searchArr)];
-	}
-
-	let searchTerm = '';
-	let searchParts: string[] = [];
-
-	function onGenerate() {
-		searchParts = generateSearchArr(searchTerm);
-		console.log(searchParts);
-		updateDoc(doc(db, 'competitions', 'd3KkEnTnqBKUhpPknPhm'), {
-			nameSearch: searchParts
 		});
 	}
 </script>
@@ -104,16 +93,27 @@
 </PageHeader>
 
 <div class="p-4">
-	<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-		<div class="input-group-shim"><Icon icon="ion:search" class="text-2xl" /></div>
-		<input type="search" placeholder="Search..." bind:value={searchTerm} />
-		<button class="variant-filled-secondary" on:click={onGenerate}>Submit</button>
-	</div>
-	<ol class="lineNumbers">
-		{#each searchParts as part}
-			<li>{part}</li>
-		{/each}
-	</ol>
+	{#each comps as newComp}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div class="card mb-4" on:click={() => onCompClick(newComp)}>
+			<header>
+				<h1 class="h1 p-4 pb-0">{newComp.name}</h1>
+				<h2 class="px-4">Hosted By: <b>{newComp.createdBy.displayName}</b></h2>
+			</header>
+			<section class="p-4">
+				<h3>Type: <b>{newComp.climbingType}</b></h3>
+				<h3>Rounds: <b> {newComp.rounds.length}</b></h3>
+				<h3>From: <b>{new Date(newComp.startDate).toLocaleString()}</b></h3>
+				<h3>To: <b>{new Date(newComp.endDate).toLocaleString()}</b></h3>
+				<p class="text-sm py-2">{newComp.description}</p>
+				<h3 class="font-bold">Age Categories</h3>
+				<ul>
+					{#each newComp.ageCategories as category}
+						<li class="list-disc list-inside text-sm">{category}</li>
+					{/each}
+				</ul>
+			</section>
+		</div>
+	{/each}
 </div>
-
-<div class="h-[1000px]" />

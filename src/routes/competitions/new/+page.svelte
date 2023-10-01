@@ -23,7 +23,8 @@
 		createdBy: {
 			uid: $userStore?.uid ?? '',
 			displayName: $userStore?.displayName ?? ''
-		}
+		},
+		searchText: []
 	};
 
 	let lockRounds = true;
@@ -48,7 +49,7 @@
 		let newCompWithSearch = {
 			...newComp,
 			searchText: generateSearchArr(newComp.name),
-			starDate: new Date(newComp.startDate),
+			startDate: new Date(newComp.startDate),
 			endDate: new Date(newComp.endDate)
 		};
 		const docRef = await addDoc(collection(db, 'competitions'), newCompWithSearch);

@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import FilterModal from '$lib/components/FilterModal.svelte';
 	import IconSelectChip from '$lib/components/IconSelectChip.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import { db } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
@@ -12,7 +14,11 @@
 		type TableSource,
 		type ModalComponent
 	} from '@skeletonlabs/skeleton';
+	import { and, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 	import { onMount } from 'svelte';
+	import type { Competition } from '../../new/types';
+
+	$: console.log($page.params.id);
 
 	/* ---------------------------------- Data ---------------------------------- */
 
@@ -56,12 +62,16 @@
 
 	const modalStore = getModalStore();
 
-	onMount(() => {
+	let comp: Competition;
+
+	onMount(async () => {
+		comp = await getComp();
+
 		const modalComponent: ModalComponent = {
 			ref: FilterModal,
 			props: {
-				roundOptions,
-				categoryOptions,
+				roundOptions: comp.rounds,
+				categoryOptions: comp.ageCategories,
 				genderOptions
 			}
 		};
@@ -96,7 +106,30 @@
 	let round: string;
 	let category: string;
 	let gender: string;
+
+	$: {
+		if (round && category && gender) {
+			getDocs(
+				query(
+					collection(db, 'competitions', $page.params.id, 'rounds'),
+					and(where('round', '==', round), where('gender', '==', gender))
+				)
+			).then((data) => {
+				data.forEach((docSnap) => {
+					console.log(docSnap.data());
+				});
+			});
+		}
+	}
 	/* ------------------------------------ - ----------------------------------- */
+
+	async function getComp() {
+		if (history.state['competition']) {
+			return history.state['competition'];
+		} else {
+			return (await getDoc(doc(db, 'competitions', $page.params.id))).data();
+		}
+	}
 </script>
 
 <PageHeader>
@@ -109,10 +142,12 @@
 			class="shadow-xl"
 		>
 			<svelte:fragment slot="lead">
-				<Icon icon="ion:arrow-back" class="text-2xl" />
+				<a href={`/competitions/${$page.params.id}`}>
+					<Icon icon="ion:arrow-back" class="text-2xl" />
+				</a>
 			</svelte:fragment>
 			<h2 class="text-center text-xs uppercase font-mono tracking-wider">Scoreboard</h2>
-			<h1 class="text-center w-max font-bold text-primary-500">Birthday Boulder Bash</h1>
+			<h1 class="text-center w-max font-bold text-primary-500">{comp?.name}</h1>
 			<svelte:fragment slot="trail"><Icon icon="ion:search" class="text-2xl" /></svelte:fragment>
 			<svelte:fragment slot="headline">
 				<div class="flex gap-2 items-center justify-center flex-wrap">
@@ -141,12 +176,12 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<button class="btn variant-filled-secondary btn-sm mb-2">
+	<a class="btn variant-filled-secondary btn-sm mb-2" href={`/competitions/${$page.params.id}`}>
 		<Icon icon="ion:chevron-back" />
 		<span> Back</span>
-	</button>
+	</a>
 	<h2 class="uppercase font-mono tracking-wider">Scoreboard</h2>
-	<h1 class="text-3xl font-bold text-primary-500">Birthday Boulder Bash</h1>
+	<h1 class="text-3xl font-bold text-primary-500">{comp?.name}</h1>
 	<div class="flex gap-2 items-center mt-4 flex-wrap">
 		<IconSelectChip
 			icon="ion:reload"
