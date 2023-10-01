@@ -5,7 +5,7 @@
 	export let icon = '';
 	export let options: any[] = [];
 	export let modalTitle = '';
-	export let value: any;
+	export let value: any = '';
 
 	const modalStore = getModalStore();
 

@@ -29,10 +29,10 @@
 		</svelte:fragment>
 		<!-- <span class="text-xs">Comps</span> -->
 	</TabAnchor>
-	<TabAnchor href="/gyms" selected={$page.url.pathname === '/gyms'}>
+	<TabAnchor href="/competitions/new" selected={$page.url.pathname === '/competitions/new'}>
 		<svelte:fragment slot="lead">
 			<div class="flex justify-center pt-1">
-				<Icon icon="map:gym" class="text-2xl text-center" />
+				<Icon icon="ion:add-sharp" class="text-2xl text-center" />
 			</div>
 		</svelte:fragment>
 		<!-- <span class="text-xs">Gyms</span> -->
