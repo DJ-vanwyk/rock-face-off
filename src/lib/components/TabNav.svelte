@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { TabAnchor, TabGroup } from '@skeletonlabs/skeleton';
+	import Restricted from './auth/Restricted.svelte';
 </script>
 
 <TabGroup
@@ -29,14 +30,16 @@
 		</svelte:fragment>
 		<!-- <span class="text-xs">Comps</span> -->
 	</TabAnchor>
-	<TabAnchor href="/competitions/new" selected={$page.url.pathname === '/competitions/new'}>
-		<svelte:fragment slot="lead">
-			<div class="flex justify-center pt-1">
-				<Icon icon="ion:add-sharp" class="text-2xl text-center" />
-			</div>
-		</svelte:fragment>
-		<!-- <span class="text-xs">Gyms</span> -->
-	</TabAnchor>
+	<Restricted>
+		<TabAnchor href="/competitions/new" selected={$page.url.pathname === '/competitions/new'}>
+			<svelte:fragment slot="lead">
+				<div class="flex justify-center pt-1">
+					<Icon icon="ion:add-sharp" class="text-2xl text-center" />
+				</div>
+			</svelte:fragment>
+			<!-- <span class="text-xs">Gyms</span> -->
+		</TabAnchor>
+	</Restricted>
 
 	<TabAnchor href="/profile" selected={$page.url.pathname === '/profile'}>
 		<svelte:fragment slot="lead">
