@@ -4,6 +4,6 @@
 
 {#if $userStore}
 	<slot />
+{:else}
+	<slot name="noUser" />
 {/if}
-
-<slot name="noUser" />

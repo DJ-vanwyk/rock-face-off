@@ -2,6 +2,7 @@
 	import CompCard from '$lib/components/CompCard.svelte';
 	import Restricted from '$lib/components/auth/Restricted.svelte';
 	import { db } from '$lib/firebase';
+	import { userStore } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
 	import { collection, getDocs, query, where } from 'firebase/firestore';
 	import { onMount } from 'svelte';
@@ -29,7 +30,9 @@
 	<img src="/logos/logo-no-background.svg" alt="" class="w-40 py-4" />
 
 	<Restricted>
-		<h1 class="text-3xl pb-4">Welcome back, DJ!</h1>
+		<h1 class="text-3xl pb-4">
+			Welcome back, <span class="text-primary-500 font-medium">{$userStore?.displayName}!</span>
+		</h1>
 	</Restricted>
 
 	<Restricted>
