@@ -20,8 +20,8 @@
 				options
 			},
 			response: (val) => {
-				if (val) {
-					value = val;
+				if (val || val.role === 'ok') {
+					value = val.data;
 				}
 			}
 		};

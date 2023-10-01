@@ -1,8 +1,20 @@
 <script lang="ts">
+	import FilterModal from '$lib/components/FilterModal.svelte';
 	import IconSelectChip from '$lib/components/IconSelectChip.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Icon from '@iconify/svelte';
-	import { AppBar, Table, tableMapperValues, type TableSource } from '@skeletonlabs/skeleton';
+	import {
+		AppBar,
+		getModalStore,
+		Table,
+		tableMapperValues,
+		type ModalSettings,
+		type TableSource,
+		type ModalComponent
+	} from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+
+	/* ---------------------------------- Data ---------------------------------- */
 
 	const sourceData = [
 		{ position: 1, name: 'DJ van Wyk', weight: 420, symbol: 'H' },
@@ -33,7 +45,45 @@
 		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' }
 	];
 
-	const roundOptions = ['1', '2', '3', '4'];
+	const tableSimple: TableSource = {
+		// A list of heading labels.
+		head: [],
+		// The data visibly shown in your table body UI.
+		body: tableMapperValues(sourceData, ['position', 'name', 'weight'])
+	};
+
+	/* ------------------------------ Filter prompt ----------------------------- */
+
+	const modalStore = getModalStore();
+
+	onMount(() => {
+		const modalComponent: ModalComponent = {
+			ref: FilterModal,
+			props: {
+				roundOptions,
+				categoryOptions,
+				genderOptions
+			}
+		};
+
+		const modalSettings: ModalSettings = {
+			title: 'Select Scoreboard',
+			type: 'component',
+			component: modalComponent,
+			response: (e) => {
+				if (e || e.role == 'ok') {
+					round = e.data.round;
+					category = e.data.category;
+					gender = e.data.gender;
+				}
+			}
+		};
+
+		modalStore.trigger(modalSettings);
+	});
+
+	/* --------------------------------- Filters -------------------------------- */
+	const roundOptions = ['Qualifiers', 'Semi-Final', 'Final'];
 	const categoryOptions = [
 		'Serious Potential',
 		'Weekend Warriors',
@@ -46,13 +96,7 @@
 	let round: string;
 	let category: string;
 	let gender: string;
-
-	const tableSimple: TableSource = {
-		// A list of heading labels.
-		head: [],
-		// The data visibly shown in your table body UI.
-		body: tableMapperValues(sourceData, ['position', 'name', 'weight'])
-	};
+	/* ------------------------------------ - ----------------------------------- */
 </script>
 
 <PageHeader>

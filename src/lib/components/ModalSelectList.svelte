@@ -2,17 +2,23 @@
 	import { ListBox, ListBoxItem, getModalStore } from '@skeletonlabs/skeleton';
 
 	const modalStore = getModalStore();
-
-	export let parent: any;
-
 	let valueSingle: string = $modalStore[0].value;
 
 	function onOk() {
-		if ($modalStore[0].response) $modalStore[0].response(valueSingle);
+		if ($modalStore[0].response)
+			$modalStore[0].response({
+				role: 'ok',
+				data: valueSingle
+			});
 		modalStore.close();
 	}
 
 	function onCancel() {
+		if ($modalStore[0].response)
+			$modalStore[0].response({
+				role: 'cancel',
+				data: valueSingle
+			});
 		modalStore.close();
 	}
 </script>
