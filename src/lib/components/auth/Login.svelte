@@ -5,10 +5,18 @@
 	function onRegister() {
 		$authPageStore = 'signup';
 	}
+
+	function onBack() {
+		$authPageStore = 'app';
+	}
 </script>
 
 <div class="w-screen h-screen flex p-6 justify-center items-center">
 	<form class="w-full">
+		<button type="button" class="mb-4 btn variant-filled-secondary btn-sm" on:click={onBack}>
+			<Icon icon="ion:chevron-back" class="mr-1" />
+			Back
+		</button>
 		<h1 class="text-3xl font-bold pb-2">Sign In</h1>
 		<p class="pb-6">
 			Don't have an account?
