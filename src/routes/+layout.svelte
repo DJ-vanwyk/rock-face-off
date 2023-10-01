@@ -11,6 +11,9 @@
 	import TabNav from '$lib/components/TabNav.svelte';
 	import { pageScrollStore } from '$lib/stores/pageScroll.store';
 	import ModalSelectList from '$lib/components/ModalSelectList.svelte';
+	import { onAuthStateChanged } from 'firebase/auth';
+	import { auth } from '$lib/firebase';
+	import { userStore } from '$lib/stores/user.store';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -29,6 +32,10 @@
 	function onPageScroll(e: Event) {
 		$pageScrollStore = (e.target as HTMLDivElement).scrollTop;
 	}
+
+	onAuthStateChanged(auth, (user) => {
+		$userStore = user;
+	});
 </script>
 
 <!-- Modal -->

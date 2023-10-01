@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
-	import { Avatar, TabAnchor, TabGroup } from '@skeletonlabs/skeleton';
+	import { TabAnchor, TabGroup } from '@skeletonlabs/skeleton';
 </script>
 
 <TabGroup
@@ -29,7 +29,7 @@
 		</svelte:fragment>
 		<!-- <span class="text-xs">Comps</span> -->
 	</TabAnchor>
-	<TabAnchor href="/competitions" selected={$page.url.pathname === '/gyms'}>
+	<TabAnchor href="/gyms" selected={$page.url.pathname === '/gyms'}>
 		<svelte:fragment slot="lead">
 			<div class="flex justify-center pt-1">
 				<Icon icon="map:gym" class="text-2xl text-center" />
@@ -38,15 +38,12 @@
 		<!-- <span class="text-xs">Gyms</span> -->
 	</TabAnchor>
 
-	<TabAnchor href="/" selected={$page.url.pathname === '/profile'}>
-		<!-- <svelte:fragment slot="lead">
-						<div class="flex justify-center pt-1">
-							<Icon icon="ion:person" class="text-2xl text-center" />
-						</div>
-					</svelte:fragment> -->
-		<div class="flex justify-center items-center h-full">
-			<Avatar initials="dj" width="w-12" background="variant-filled-primary" class="text-white" />
-		</div>
+	<TabAnchor href="/profile" selected={$page.url.pathname === '/profile'}>
+		<svelte:fragment slot="lead">
+			<div class="flex justify-center pt-1">
+				<Icon icon="ion:person" class="text-2xl text-center" />
+			</div>
+		</svelte:fragment>
 	</TabAnchor>
 
 	<!-- ... -->
