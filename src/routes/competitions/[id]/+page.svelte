@@ -7,6 +7,7 @@
 	import { db } from '$lib/firebase';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { selectedComp } from '$lib/stores/selectedComp.store';
 
 	let compPromise: Promise<Competition> = getComp();
 
@@ -17,6 +18,8 @@
 			return (await getDoc(doc(db, 'competitions', $page.params.id))).data();
 		}
 	}
+
+	$: console.log($selectedComp);
 
 	async function goToScoreBoard() {
 		goto(location.href + '/scoreboard', {

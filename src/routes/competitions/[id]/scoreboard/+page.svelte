@@ -14,9 +14,20 @@
 		type TableSource,
 		type ModalComponent
 	} from '@skeletonlabs/skeleton';
-	import { and, collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+	import {
+		and,
+		collection,
+		doc,
+		getDoc,
+		getDocs,
+		onSnapshot,
+		query,
+		where,
+		type Unsubscribe
+	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import type { Competition } from '../../new/types';
+	import { selectedComp } from '$lib/stores/selectedComp.store';
 
 	$: console.log($page.params.id);
 
@@ -92,6 +103,8 @@
 		modalStore.trigger(modalSettings);
 	});
 
+	$: console.log($selectedComp);
+
 	/* --------------------------------- Filters -------------------------------- */
 	const roundOptions = ['Qualifiers', 'Semi-Final', 'Final'];
 	const categoryOptions = [
@@ -107,18 +120,23 @@
 	let category: string;
 	let gender: string;
 
+	let unSub: Unsubscribe;
+
 	$: {
+		console.log('Change');
+		if (unSub) {
+			unSub();
+		}
 		if (round && category && gender) {
-			getDocs(
+			unSub = onSnapshot(
 				query(
 					collection(db, 'competitions', $page.params.id, 'rounds'),
 					and(where('round', '==', round), where('gender', '==', gender))
-				)
-			).then((data) => {
-				data.forEach((docSnap) => {
-					console.log(docSnap.data());
-				});
-			});
+				),
+				(docs) => {
+					docs.forEach((doc) => console.log(doc.data()));
+				}
+			);
 		}
 	}
 	/* ------------------------------------ - ----------------------------------- */

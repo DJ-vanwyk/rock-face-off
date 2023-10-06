@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, Modal, type ModalComponent } from '@skeletonlabs/skeleton';
+	import { AppShell, Modal, Toast, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { initializeStores } from '@skeletonlabs/skeleton';
 
 	// Floating UI for Popups
@@ -14,6 +14,7 @@
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { auth } from '$lib/firebase';
 	import { userStore } from '$lib/stores/user.store';
+	import { account } from '$lib/appwrite';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -28,6 +29,8 @@
 		}
 	};
 
+	account.getSession('current').then((data) => console.log(data));
+
 	// Capture scroll event
 	function onPageScroll(e: Event) {
 		$pageScrollStore = (e.target as HTMLDivElement).scrollTop;
@@ -40,6 +43,8 @@
 
 <!-- Modal -->
 <Modal components={modalComponentRegistry} />
+<!-- Modal -->
+<Toast />
 
 <!-- App Shell -->
 <Auth>
