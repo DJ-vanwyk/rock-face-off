@@ -55,7 +55,8 @@
 						userId: $user?.account.$id,
 						competition: data.id,
 						ageCategory: ageCategoryValue,
-						genderCategory: genderCategoryValue
+						genderCategory: genderCategoryValue,
+						displayName: $user.account.name
 					}
 				);
 				goto(`/competitions/${data.id}/participants/${doc.$id}`);

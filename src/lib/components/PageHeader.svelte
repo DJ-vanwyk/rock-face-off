@@ -31,7 +31,7 @@
 		</div>
 	{/if}
 
-	<div class="p-4 mt-4" bind:clientHeight={headerHight}>
+	<div class="p-4 pb-0 mt-4" bind:clientHeight={headerHight}>
 		<slot />
 	</div>
 </div>
