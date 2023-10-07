@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { account } from '$lib/appwrite';
 	import { authPageStore } from '$lib/stores/authPage.store';
+	import { user } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
 
 	let email = '';
@@ -15,10 +16,12 @@
 	}
 
 	async function onLogin() {
-		await account.createEmailSession(email, password);
-		let loggedInUser = await account.get();
+		user.login(email, password);
 
-		console.log(loggedInUser);
+		// await account.createEmailSession(email, password);
+		// let loggedInUser = await account.get();
+
+		// console.log(loggedInUser);
 	}
 </script>
 

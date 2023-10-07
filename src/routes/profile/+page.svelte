@@ -3,7 +3,7 @@
 	import Restricted from '$lib/components/auth/Restricted.svelte';
 	import { auth } from '$lib/firebase';
 	import { authPageStore } from '$lib/stores/authPage.store';
-	import { userStore } from '$lib/stores/user.store';
+	import { userStore, user } from '$lib/stores/user.store';
 	import { Avatar } from '@skeletonlabs/skeleton';
 	import { signOut } from 'firebase/auth';
 
@@ -15,10 +15,10 @@
 		$authPageStore = 'signup';
 	}
 	function onLogout() {
-		signOut(auth);
+		user.logout();
 	}
 
-	$: console.log($userStore);
+	// $: console.log($userStore);
 </script>
 
 <Restricted>
@@ -28,12 +28,8 @@
 	</PageHeader> -->
 
 	<div class="flex justify-center items-center p-4 flex-col gap-4">
-		<Avatar
-			initials={$userStore?.displayName ?? ''}
-			width="w-32"
-			src={$userStore?.photoURL ?? ''}
-		/>
-		<h2 class="text-2xl font-bold">{$userStore?.displayName}</h2>
+		<Avatar initials={$user?.account.name ?? ''} width="w-32" src={$userStore?.photoURL ?? ''} />
+		<h2 class="text-2xl font-bold">{$user?.account.name}</h2>
 	</div>
 	<div class="p-4">
 		<button class="btn variant-filled-secondary w-full" on:click={onLogout}>Logout</button>

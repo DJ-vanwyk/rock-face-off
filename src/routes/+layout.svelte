@@ -29,8 +29,6 @@
 		}
 	};
 
-	account.getSession('current').then((data) => console.log(data));
-
 	// Capture scroll event
 	function onPageScroll(e: Event) {
 		$pageScrollStore = (e.target as HTMLDivElement).scrollTop;

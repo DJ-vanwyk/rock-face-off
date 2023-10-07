@@ -2,6 +2,7 @@
 	import { account } from '$lib/appwrite';
 	import { auth } from '$lib/firebase';
 	import { authPageStore } from '$lib/stores/authPage.store';
+	import { user } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
 	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import { ID } from 'appwrite';
@@ -17,20 +18,23 @@
 	}
 
 	// Fomr Fields
-	let name = '';
+	let name = 'DJ';
 	let nameError = '';
-	let email = '';
+	let email = 'djvanwyk100@gmail.com';
 	let emailError = '';
-	let password = '';
+	let password = 'Demo123!';
 	let passwordError = '';
 	let showPassword = false;
-	let confirmPassword = '';
+	let confirmPassword = 'Demo123!';
 	let confirmPasswordError = '';
 	let showConfirmPassword = false;
 	// Error Message
 	let Error = false;
+	let disabled = false;
 
 	async function onSingUp() {
+		disabled = true;
+
 		nameError = '';
 		emailError = '';
 		passwordError = '';
@@ -55,22 +59,29 @@
 		}
 
 		if (Error) {
+			disabled = false;
 			return;
 		}
 
-		try {
-			const promise = await account.create(ID.unique(), email, password, name);
+		const error = await user.singUp(email, password, name);
 
-			console.log(promise);
-		} catch (error) {
-			console.log(error);
-			toastStore.trigger({
-				message: error as any,
-				autohide: true,
-				timeout: 2000,
-				background: 'variant-filled-error'
-			});
+		if (error) {
+			if (error.includes('password')) {
+				passwordError = error;
+				Error = true;
+			} else if (error.includes('Invalid `email` param')) {
+				emailError = 'Value must be a valid email address';
+				Error = true;
+			} else {
+				toastStore.trigger({
+					message: error,
+					autohide: true,
+					timeout: 3000,
+					background: 'variant-filled-error'
+				});
+			}
 		}
+		disabled = false;
 	}
 
 	function onInput(field: string) {
@@ -91,7 +102,7 @@
 				confirmPasswordError = '';
 				Error = false;
 				if (password !== confirmPassword) {
-					confirmPasswordError = 'Password does not match';
+					confirmPasswordError = 'Passwords does not match.';
 					Error = true;
 				}
 				break;
@@ -154,7 +165,10 @@
 		</label>
 		<label class="label mb-2" for="password">
 			<span>Password</span>
-			<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+			<div
+				class="input-group input-group-divider grid-cols-[1fr_auto]"
+				class:input-error={passwordError}
+			>
 				{#if showPassword}
 					<input
 						class="input"
@@ -165,9 +179,11 @@
 						bind:value={password}
 						on:input={() => onInput('password')}
 					/>
-					<button class="input-group-shim" on:click={() => (showPassword = !showPassword)}>
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="input-group-shim" on:click={() => (showPassword = !showPassword)}>
 						<Icon icon="ion:eye-off" />
-					</button>
+					</div>
 				{:else}
 					<input
 						class="input"
@@ -178,9 +194,11 @@
 						bind:value={password}
 						on:input={() => onInput('password')}
 					/>
-					<button class="input-group-shim" on:click={() => (showPassword = !showPassword)}>
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="input-group-shim" on:click={() => (showPassword = !showPassword)}>
 						<Icon icon="ion:eye" />
-					</button>
+					</div>
 				{/if}
 			</div>
 
@@ -190,7 +208,10 @@
 		</label>
 		<label class="label">
 			<span>Confirm Password</span>
-			<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+			<div
+				class="input-group input-group-divider grid-cols-[1fr_auto]"
+				class:input-error={confirmPasswordError}
+			>
 				{#if showConfirmPassword}
 					<input
 						class="input"
@@ -200,12 +221,14 @@
 						bind:value={confirmPassword}
 						on:input={() => onInput('confirmPassword')}
 					/>
-					<button
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div
 						class="input-group-shim"
 						on:click={() => (showConfirmPassword = !showConfirmPassword)}
 					>
 						<Icon icon="ion:eye-off" />
-					</button>
+					</div>
 				{:else}
 					<input
 						class="input"
@@ -215,12 +238,14 @@
 						bind:value={confirmPassword}
 						on:input={() => onInput('confirmPassword')}
 					/>
-					<button
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div
 						class="input-group-shim"
 						on:click={() => (showConfirmPassword = !showConfirmPassword)}
 					>
 						<Icon icon="ion:eye" />
-					</button>
+					</div>
 				{/if}
 			</div>
 			{#if confirmPasswordError}
@@ -228,7 +253,11 @@
 			{/if}
 		</label>
 
-		<button disabled={Error} class="btn variant-filled-primary w-full mt-7" on:click={onSingUp}>
+		<button
+			disabled={Error || disabled}
+			class="btn variant-filled-primary w-full mt-7"
+			on:click={onSingUp}
+		>
 			Register
 		</button>
 	</form>

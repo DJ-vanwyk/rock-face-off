@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { userStore } from '$lib/stores/user.store';
+	import { user, userStore } from '$lib/stores/user.store';
 </script>
 
-{#if $userStore}
+{#if $user}
 	<slot />
 {:else}
 	<slot name="noUser" />
