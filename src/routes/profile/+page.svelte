@@ -1,11 +1,14 @@
 <script lang="ts">
+	import LoadingBtn from '$lib/components/LoadingBtn.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Restricted from '$lib/components/auth/Restricted.svelte';
 	import { auth } from '$lib/firebase';
 	import { authPageStore } from '$lib/stores/authPage.store';
 	import { userStore, user } from '$lib/stores/user.store';
+	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton';
-	import { signOut } from 'firebase/auth';
+
+	let disabled = false;
 
 	function onLogin() {
 		$authPageStore = 'login';
@@ -14,8 +17,10 @@
 	function onSignUp() {
 		$authPageStore = 'signup';
 	}
-	function onLogout() {
-		user.logout();
+	async function onLogout() {
+		disabled = true;
+		await user.logout();
+		disabled = false;
 	}
 
 	// $: console.log($userStore);
@@ -29,10 +34,51 @@
 
 	<div class="flex justify-center items-center p-4 flex-col gap-4">
 		<Avatar initials={$user?.account.name ?? ''} width="w-32" src={$userStore?.photoURL ?? ''} />
-		<h2 class="text-2xl font-bold">{$user?.account.name}</h2>
+		<!-- <h2 class="text-2xl font-bold">{$user?.account.name}</h2> -->
+		<label class="label w-full" for="name">
+			<span>Name</span>
+			<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+				<input
+					class="input"
+					disabled
+					type="text"
+					placeholder=""
+					name="name"
+					value={$user?.account.name}
+				/>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<div class="input-group-shim">
+					<Icon icon="ion:pencil" />
+				</div>
+			</div>
+		</label>
+		<label class="label w-full" for="email">
+			<span>Email</span>
+			<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+				<input
+					class="input"
+					disabled
+					type="text"
+					placeholder=""
+					name="email"
+					value={$user?.account.email}
+				/>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<!-- <div class="input-group-shim">
+					<Icon icon="ion:pencil" />
+				</div> -->
+			</div>
+		</label>
 	</div>
+
 	<div class="p-4">
-		<button class="btn variant-filled-secondary w-full" on:click={onLogout}>Logout</button>
+		<LoadingBtn {disabled} button="variant-filled-secondary w-full" on:click={onLogout}>
+			Logout
+		</LoadingBtn>
+
+		<!-- <button class="btn variant-filled-secondary w-full" >Logout</button> -->
 	</div>
 
 	<svelte:fragment slot="noUser">
