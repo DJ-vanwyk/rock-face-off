@@ -1,38 +1,16 @@
 <script lang="ts">
 	import CompCard from '$lib/components/CompCard.svelte';
 	import Restricted from '$lib/components/auth/Restricted.svelte';
-	import { db } from '$lib/firebase';
-	import { userStore } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
-	import { collection, getDocs, query, where } from 'firebase/firestore';
-	import { onMount } from 'svelte';
 
 	let competitions: any[] = [];
-
-	onMount(async () => {
-		const q = query(collection(db, 'competitions'));
-
-		const querySnapshot = await getDocs(q);
-
-		// querySnapshot.forEach((doc) => {
-		// 	// doc.data() is never undefined for query doc snapshots
-		// 	let comp = doc.data();
-		// 	comp['id'] = doc.id;
-
-		// 	console.log(comp);
-
-		// 	competitions = [...competitions, comp];
-		// });
-	});
 </script>
 
 <div class="p-4">
 	<img src="/logos/logo-no-background.svg" alt="" class="w-40 py-4" />
 
 	<Restricted>
-		<h1 class="text-3xl pb-4">
-			Welcome back, <span class="text-primary-500 font-medium">{$userStore?.displayName}!</span>
-		</h1>
+		<h1 class="text-3xl pb-4" />
 	</Restricted>
 
 	<Restricted>

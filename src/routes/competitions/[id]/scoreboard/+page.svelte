@@ -3,7 +3,6 @@
 	import FilterModal from '$lib/components/FilterModal.svelte';
 	import IconSelectChip from '$lib/components/IconSelectChip.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import { db } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
@@ -14,17 +13,7 @@
 		type TableSource,
 		type ModalComponent
 	} from '@skeletonlabs/skeleton';
-	import {
-		and,
-		collection,
-		doc,
-		getDoc,
-		getDocs,
-		onSnapshot,
-		query,
-		where,
-		type Unsubscribe
-	} from 'firebase/firestore';
+
 	import { onMount } from 'svelte';
 	import type { Competition } from '../../new/types';
 	import { selectedComp } from '$lib/stores/selectedComp.store';
@@ -75,34 +64,6 @@
 
 	let comp: Competition;
 
-	onMount(async () => {
-		comp = await getComp();
-
-		const modalComponent: ModalComponent = {
-			ref: FilterModal,
-			props: {
-				roundOptions: comp.rounds,
-				categoryOptions: comp.ageCategories,
-				genderOptions
-			}
-		};
-
-		const modalSettings: ModalSettings = {
-			title: 'Select Scoreboard',
-			type: 'component',
-			component: modalComponent,
-			response: (e) => {
-				if (e || e.role == 'ok') {
-					round = e.data.round;
-					category = e.data.category;
-					gender = e.data.gender;
-				}
-			}
-		};
-
-		modalStore.trigger(modalSettings);
-	});
-
 	$: console.log($selectedComp);
 
 	/* --------------------------------- Filters -------------------------------- */
@@ -120,33 +81,31 @@
 	let category: string;
 	let gender: string;
 
-	let unSub: Unsubscribe;
-
 	$: {
-		console.log('Change');
-		if (unSub) {
-			unSub();
-		}
-		if (round && category && gender) {
-			unSub = onSnapshot(
-				query(
-					collection(db, 'competitions', $page.params.id, 'rounds'),
-					and(where('round', '==', round), where('gender', '==', gender))
-				),
-				(docs) => {
-					docs.forEach((doc) => console.log(doc.data()));
-				}
-			);
-		}
+		// console.log('Change');
+		// if (unSub) {
+		// 	unSub();
+		// }
+		// if (round && category && gender) {
+		// 	unSub = onSnapshot(
+		// 		query(
+		// 			collection(db, 'competitions', $page.params.id, 'rounds'),
+		// 			and(where('round', '==', round), where('gender', '==', gender))
+		// 		),
+		// 		(docs) => {
+		// 			docs.forEach((doc) => console.log(doc.data()));
+		// 		}
+		// 	);
+		// }
 	}
 	/* ------------------------------------ - ----------------------------------- */
 
 	async function getComp() {
-		if (history.state['competition']) {
-			return history.state['competition'];
-		} else {
-			return (await getDoc(doc(db, 'competitions', $page.params.id))).data();
-		}
+		// if (history.state['competition']) {
+		// 	return history.state['competition'];
+		// } else {
+		// 	return (await getDoc(doc(db, 'competitions', $page.params.id))).data();
+		// }
 	}
 </script>
 

@@ -1,10 +1,7 @@
 import { account } from '$lib/appwrite';
 import { Account, AppwriteException, ID } from 'appwrite';
 import type { Models } from 'appwrite';
-import type { User } from 'firebase/auth';
 import { writable } from 'svelte/store';
-
-export const userStore = writable<User | null>(null);
 
 interface AppwriteUser {
 	account: Models.User<Models.Preferences>;

@@ -41,7 +41,6 @@
     "@floating-ui/dom": "1.5.3",
     "@iconify/svelte": "^3.1.4",
     "@sveltejs/adapter-static": "^2.0.3",
-    "appwrite": "^13.0.0",
-    "firebase": "^10.4.0"
+    "appwrite": "^13.0.0"
   }
 }

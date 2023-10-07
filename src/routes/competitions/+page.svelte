@@ -1,25 +1,13 @@
 <script lang="ts">
 	import IconSelectChip from '$lib/components/IconSelectChip.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import { db } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton';
-	import { collection, doc, getDocs, orderBy, query, updateDoc, where } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 	import type { Competition } from './new/types';
 	import { goto } from '$app/navigation';
 
-	const q = query(collection(db, 'competitions'), orderBy('startDate', 'asc'));
-
 	let comps: Competition[] = [];
-
-	onMount(async () => {
-		const querySnapshot = await getDocs(q);
-		querySnapshot.forEach((doc) => {
-			// doc.data() is never undefined for query doc snapshots
-			comps = [...comps, { ...(doc.data() as Competition), id: doc.id }];
-		});
-	});
 
 	function onCompClick(comp: Competition) {
 		goto(`/competitions/${comp.id}`, {

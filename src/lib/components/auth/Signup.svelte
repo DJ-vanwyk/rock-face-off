@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { account } from '$lib/appwrite';
-	import { auth } from '$lib/firebase';
 	import { authPageStore } from '$lib/stores/authPage.store';
 	import { user } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';

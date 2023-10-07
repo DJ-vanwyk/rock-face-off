@@ -1,10 +1,8 @@
 <script lang="ts">
 	import LoadingBtn from '$lib/components/LoadingBtn.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Restricted from '$lib/components/auth/Restricted.svelte';
-	import { auth } from '$lib/firebase';
 	import { authPageStore } from '$lib/stores/authPage.store';
-	import { userStore, user } from '$lib/stores/user.store';
+	import { user } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton';
 
@@ -33,7 +31,7 @@
 	</PageHeader> -->
 
 	<div class="flex justify-center items-center p-4 flex-col gap-4">
-		<Avatar initials={$user?.account.name ?? ''} width="w-32" src={$userStore?.photoURL ?? ''} />
+		<Avatar initials={$user?.account.name ?? ''} width="w-32" />
 		<!-- <h2 class="text-2xl font-bold">{$user?.account.name}</h2> -->
 		<label class="label w-full" for="name">
 			<span>Name</span>

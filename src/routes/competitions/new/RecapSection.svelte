@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { userStore } from '$lib/stores/user.store';
 	import type { Competition } from './types';
 
 	export let newComp: Competition;

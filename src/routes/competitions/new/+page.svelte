@@ -6,9 +6,6 @@
 	import type { Competition } from './types';
 	import RoundsSection from './RoundsSection.svelte';
 	import RecapSection from './RecapSection.svelte';
-	import { userStore } from '$lib/stores/user.store';
-	import { addDoc, collection } from 'firebase/firestore';
-	import { db } from '$lib/firebase';
 
 	let newComp: Competition = {
 		name: 'Test Comp',
@@ -21,8 +18,8 @@
 		ageCategories: [],
 		rounds: ['Round 1'],
 		createdBy: {
-			uid: $userStore?.uid ?? '',
-			displayName: $userStore?.displayName ?? ''
+			uid: '',
+			displayName: ''
 		},
 		searchText: []
 	};
@@ -52,8 +49,6 @@
 			startDate: new Date(newComp.startDate),
 			endDate: new Date(newComp.endDate)
 		};
-		const docRef = await addDoc(collection(db, 'competitions'), newCompWithSearch);
-		console.log('Document written with ID: ', docRef.id);
 	}
 </script>
 

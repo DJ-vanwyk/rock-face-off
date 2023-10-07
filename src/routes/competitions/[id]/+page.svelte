@@ -2,35 +2,9 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Icon from '@iconify/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton';
-	import type { Competition } from '../new/types';
-	import { collection, doc, getDoc } from 'firebase/firestore';
-	import { db } from '$lib/firebase';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import { selectedComp } from '$lib/stores/selectedComp.store';
-
-	let compPromise: Promise<Competition> = getComp();
-
-	async function getComp() {
-		if (history.state['competition']) {
-			return history.state['competition'];
-		} else {
-			return (await getDoc(doc(db, 'competitions', $page.params.id))).data();
-		}
-	}
-
-	$: console.log($selectedComp);
-
-	async function goToScoreBoard() {
-		goto(location.href + '/scoreboard', {
-			state: {
-				competition: await compPromise
-			}
-		});
-	}
 </script>
 
-{#await compPromise then comp}
+<!-- {#await compPromise then comp}
 	<PageHeader>
 		<svelte:fragment slot="scrollHeader">
 			<AppBar
@@ -43,7 +17,6 @@
 					<Icon icon="ion:arrow-back" class="text-2xl" />
 				</svelte:fragment>
 				Page Header
-				<!-- <svelte:fragment slot="trail">(actions)</svelte:fragment> -->
 			</AppBar>
 		</svelte:fragment>
 		<a class="btn btn-sm variant-filled-secondary" href="/competitions">
@@ -78,4 +51,4 @@
 			</section>
 		</div>
 	</div>
-{/await}
+{/await} -->
