@@ -29,17 +29,22 @@ function createUser() {
 	async function login(email: string, password: string) {
 		try {
 			const newSession = await account.createEmailSession(email, password);
-			console.log(newSession);
-
 			const loggedInUser = await account.get();
-			console.log(loggedInUser);
 
 			user.set({
 				account: loggedInUser,
 				session: newSession
 			});
+
+			return null;
 		} catch (error) {
-			console.log(error);
+			if (error instanceof AppwriteException) {
+				const appwriteError = error as AppwriteException;
+				return appwriteError.message;
+			} else {
+				console.log(error);
+				return 'App Error occurred';
+			}
 		}
 	}
 

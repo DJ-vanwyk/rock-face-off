@@ -18,14 +18,14 @@
 	}
 
 	// Fomr Fields
-	let name = 'DJ';
+	let name = '';
 	let nameError = '';
-	let email = 'djvanwyk100@gmail.com';
+	let email = '';
 	let emailError = '';
-	let password = 'Demo123!';
+	let password = '';
 	let passwordError = '';
 	let showPassword = false;
-	let confirmPassword = 'Demo123!';
+	let confirmPassword = '';
 	let confirmPasswordError = '';
 	let showConfirmPassword = false;
 	// Error Message
@@ -81,6 +81,8 @@
 				});
 			}
 		}
+		$authPageStore = 'signUpSuccess';
+
 		disabled = false;
 	}
 
@@ -258,7 +260,10 @@
 			class="btn variant-filled-primary w-full mt-7"
 			on:click={onSingUp}
 		>
-			Register
+			{#if disabled}
+				<ProgressRadial width="w-6" stroke={150} meter="stroke-white" track="stroke-white/20" />
+			{/if}
+			<span> Register </span>
 		</button>
 	</form>
 </div>

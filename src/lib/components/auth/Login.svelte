@@ -1,11 +1,16 @@
 <script lang="ts">
-	import { account } from '$lib/appwrite';
 	import { authPageStore } from '$lib/stores/authPage.store';
 	import { user } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
+	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 
 	let email = '';
 	let password = '';
+
+	let disabled = false;
+	let showPassword = false;
+
+	const toastStore = getToastStore();
 
 	function onRegister() {
 		$authPageStore = 'signup';
@@ -16,7 +21,22 @@
 	}
 
 	async function onLogin() {
-		user.login(email, password);
+		disabled = true;
+		const error = await user.login(email, password);
+
+		if (error) {
+			toastStore.trigger({
+				message: error,
+				autohide: true,
+				timeout: 3000,
+				background: 'variant-filled-error'
+			});
+			disabled = false;
+			return;
+		}
+
+		$authPageStore = 'app';
+		disabled = false;
 
 		// await account.createEmailSession(email, password);
 		// let loggedInUser = await account.get();
@@ -31,7 +51,7 @@
 			<Icon icon="ion:chevron-back" class="mr-1" />
 			Back
 		</button>
-		<h1 class="text-3xl font-bold pb-2">Sign In</h1>
+		<h1 class="text-3xl font-bold pb-2">Login</h1>
 		<p class="pb-4">
 			Don't have an account?
 			<button class="text-blue-500 font-medium" on:click={onRegister} type="button">Register</button
@@ -53,13 +73,42 @@
 			<span>Email</span>
 			<input class="input" type="text" placeholder="" bind:value={email} />
 		</label>
-		<label class="label">
+		<label class="label mb-2" for="password">
 			<span>Password</span>
-			<input class="input" type="password" placeholder="" bind:value={password} />
+			<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+				{#if showPassword}
+					<input class="input" type="text" placeholder="" name="password" bind:value={password} />
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="input-group-shim" on:click={() => (showPassword = !showPassword)}>
+						<Icon icon="ion:eye-off" />
+					</div>
+				{:else}
+					<input
+						class="input"
+						type="password"
+						placeholder=""
+						name="password"
+						bind:value={password}
+					/>
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="input-group-shim" on:click={() => (showPassword = !showPassword)}>
+						<Icon icon="ion:eye" />
+					</div>
+				{/if}
+			</div>
 		</label>
+
 		<div class="flex justify-end py-1">
 			<button class="text-blue-500">Forget password?</button>
 		</div>
-		<button class="btn variant-filled-primary w-full mt-7" on:click={onLogin}>Login</button>
+		<!-- <button class="btn variant-filled-primary w-full mt-7" on:click={onLogin}>Login</button> -->
+		<button {disabled} class="btn variant-filled-primary w-full mt-7" on:click={onLogin}>
+			{#if disabled}
+				<ProgressRadial width="w-6" stroke={150} meter="stroke-white" track="stroke-white/20" />
+			{/if}
+			<span> Login </span>
+		</button>
 	</form>
 </div>
