@@ -4,21 +4,39 @@
 	import type { PageData } from './$types';
 	import { authPageStore } from '$lib/stores/authPage.store';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { RadioGroup, RadioItem, getModalStore } from '@skeletonlabs/skeleton';
 	import { databases } from '$lib/appwrite';
 	import { ID, Query } from 'appwrite';
 	import { user } from '$lib/stores/user.store';
+	import LoadingBtn from '$lib/components/LoadingBtn.svelte';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
+	const modalStore = getModalStore();
+
 	let ageCategoryValue = data.ageCategories[0].$id;
 	let genderCategoryValue = data.genderCategories[0].$id;
+	let disabled = false;
 
 	function onLogin() {
 		$authPageStore = 'login';
 	}
 
 	async function onRegister() {
+		modalStore.trigger({
+			type: 'confirm',
+			// Data
+			title: 'Submit Entry',
+			body: 'Are you sure you wish to proceed? You will not be able to change categories after you have entered this competition.',
+			buttonTextConfirm: 'Enter Competition',
+			// TRUE if confirm pressed, FALSE if cancel pressed
+			response: (r: boolean) => (r ? enterComp() : '')
+		});
+	}
+
+	async function enterComp() {
+		disabled = true;
 		if ($user?.account.$id) {
 			const entriesList = await databases.listDocuments(
 				'652128d14c078883668a',
@@ -29,7 +47,7 @@
 			console.log(entriesList);
 
 			if (entriesList.total == 0) {
-				await databases.createDocument(
+				const doc = await databases.createDocument(
 					'652128d14c078883668a',
 					'65213e03b1f3ab84700f',
 					ID.unique(),
@@ -40,10 +58,12 @@
 						genderCategory: genderCategoryValue
 					}
 				);
+				goto(`/competitions/${data.id}/participants/${doc.$id}`);
 			} else {
 				alert('User Already entered');
 			}
 		}
+		disabled = false;
 	}
 </script>
 
@@ -91,9 +111,9 @@
 			</label>
 		</form>
 
-		<button class="btn variant-filled-primary w-full" on:click|preventDefault={onRegister}
-			>Register</button
-		>
+		<LoadingBtn {disabled} on:click={onRegister} button="variant-filled-primary w-full">
+			Register
+		</LoadingBtn>
 	</div>
 
 	<svelte:fragment slot="noUser">

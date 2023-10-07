@@ -10,6 +10,8 @@
 
 	let isRegisteredPromise = checkEntry();
 
+	let participantId: string | null = null;
+
 	async function checkEntry() {
 		if ($user) {
 			try {
@@ -19,6 +21,7 @@
 				]);
 
 				if (resp.total !== 0) {
+					participantId = resp.documents[0].$id;
 					return true;
 				} else {
 					return false;
@@ -44,8 +47,11 @@
 		<div class="placeholder mb-6 h-[42px]" />
 	{:then isRegistered}
 		{#if isRegistered}
-			<a href={`${competition.$id}/enter`} class="btn variant-filled-secondary w-full mb-6">
-				My Scores
+			<a
+				href={`${competition.$id}/participants/${participantId}`}
+				class="btn variant-filled-secondary w-full mb-6"
+			>
+				Go To Scorecard
 			</a>
 		{:else}
 			<a href={`${competition.$id}/enter`} class="btn variant-filled-primary w-full mb-6">
