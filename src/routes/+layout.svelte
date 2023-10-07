@@ -18,6 +18,7 @@
 	import { pageScrollStore } from '$lib/stores/pageScroll.store';
 	import ModalSelectList from '$lib/components/ModalSelectList.svelte';
 	import { user } from '$lib/stores/user.store';
+	import { navigating } from '$app/stores';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -49,7 +50,14 @@
 	<Auth>
 		<AppShell regionPage="no-scrollbar" on:scroll={onPageScroll}>
 			<!-- Page Route Content -->
-			<slot />
+
+			{#if $navigating}
+				<div class="h-screen flex justify-center items-center">
+					<ProgressRadial stroke={100} meter="stroke-primary-500" track="stroke-primary-500/30" />
+				</div>
+			{:else}
+				<slot />
+			{/if}
 			<svelte:fragment slot="footer">
 				<TabNav />
 			</svelte:fragment>
