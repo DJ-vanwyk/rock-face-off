@@ -2,53 +2,50 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Icon from '@iconify/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton';
+
+	export let data: any;
+
+	let competition = data.competition;
+
+	console.log(data);
 </script>
 
-<!-- {#await compPromise then comp}
-	<PageHeader>
-		<svelte:fragment slot="scrollHeader">
-			<AppBar
-				gridColumns="grid-cols-3"
-				slotDefault="place-self-center"
-				slotTrail="place-content-end"
-				class="shadow-xl"
-			>
-				<svelte:fragment slot="lead">
-					<Icon icon="ion:arrow-back" class="text-2xl" />
-				</svelte:fragment>
-				Page Header
-			</AppBar>
-		</svelte:fragment>
-		<a class="btn btn-sm variant-filled-secondary" href="/competitions">
-			<span><Icon icon="ion:chevron-back" /></span>
-			<span>Back</span>
-		</a>
-		<h1 class="text-3xl pt-4">{comp.name}</h1>
-	</PageHeader>
+<img src={competition.imgUrl} alt="" class="h-60 w-full object-cover" />
+<a href="/competitions" class="btn-icon variant-filled-surface fixed top-2 left-2">
+	<Icon icon="ion:chevron-back" />
+</a>
+<div class="p-4">
+	<h1 class="text-2xl font-bold">{competition.name}</h1>
+	<h2 class="mb-3">{competition.organization}</h2>
+	<a href={`${competition.id}/enter`} class="btn variant-filled-primary w-full mb-6">Enter Now</a>
+	<p class="mb-6 text-sm">{competition.description}</p>
+	<h3 class="font-bold mb-2">Detail:</h3>
 
-	<div class="p-4">
-		<div class="btn-group variant-filled mb-4">
-			<button>Enter</button>
-			<button on:click={goToScoreBoard}>Scoreboard</button>
-		</div>
-		<div class="card mb-4">
-			<header>
-				<h1 class="h1 p-4 pb-0">{comp.name}</h1>
-				<h2 class="px-4">Hosted By: <b>{comp.createdBy.displayName}</b></h2>
-			</header>
-			<section class="p-4">
-				<h3>Type: <b>{comp.climbingType}</b></h3>
-				<h3>Rounds: <b> {comp.rounds.length}</b></h3>
-				<h3>From: <b>{new Date(comp.startDate).toLocaleString()}</b></h3>
-				<h3>To: <b>{new Date(comp.endDate).toLocaleString()}</b></h3>
-				<p class="text-sm py-2">{comp.description}</p>
-				<h3 class="font-bold">Age Categories</h3>
-				<ul>
-					{#each comp.ageCategories as category}
-						<li class="list-disc list-inside text-sm">{category}</li>
-					{/each}
-				</ul>
-			</section>
-		</div>
-	</div>
-{/await} -->
+	<table class="table table-hover mb-10 border border-surface-500 border-separate">
+		<!-- <thead>
+			<tr>
+				<th>Position</th>
+				<th>Weight</th>
+			</tr>
+		</thead> -->
+		<tbody>
+			<tr>
+				<td class="font-bold">Start Date</td>
+				<td>{new Date(competition.startDate).toLocaleString()}</td>
+			</tr>
+			<tr>
+				<td class="font-bold">End Date</td>
+				<td>{new Date(competition.endDate).toLocaleString()}</td>
+			</tr>
+			<tr>
+				<td class="font-bold">Location</td>
+				<td>{competition.location}</td>
+			</tr>
+			<tr>
+				<td class="font-bold">Organizers</td>
+				<td>{competition.organization}</td>
+			</tr>
+		</tbody>
+		<tbody />
+	</table>
+</div>

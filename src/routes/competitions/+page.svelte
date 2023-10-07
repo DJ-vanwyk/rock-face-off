@@ -3,11 +3,9 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Icon from '@iconify/svelte';
 	import { AppBar } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
 	import type { Competition } from './new/types';
 	import { goto } from '$app/navigation';
-
-	let comps: Competition[] = [];
+	import { databases } from '$lib/appwrite';
 
 	function onCompClick(comp: Competition) {
 		goto(`/competitions/${comp.id}`, {
@@ -16,6 +14,8 @@
 			}
 		});
 	}
+
+	let compPromise = databases.listDocuments('652128d14c078883668a', '652128f4e9f8b22fefbe', []);
 </script>
 
 <PageHeader>
@@ -81,27 +81,19 @@
 </PageHeader>
 
 <div class="p-4">
-	{#each comps as newComp}
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="card mb-4" on:click={() => onCompClick(newComp)}>
-			<header>
-				<h1 class="h1 p-4 pb-0">{newComp.name}</h1>
-				<h2 class="px-4">Hosted By: <b>{newComp.createdBy.displayName}</b></h2>
-			</header>
-			<section class="p-4">
-				<h3>Type: <b>{newComp.climbingType}</b></h3>
-				<h3>Rounds: <b> {newComp.rounds.length}</b></h3>
-				<h3>From: <b>{new Date(newComp.startDate).toLocaleString()}</b></h3>
-				<h3>To: <b>{new Date(newComp.endDate).toLocaleString()}</b></h3>
-				<p class="text-sm py-2">{newComp.description}</p>
-				<h3 class="font-bold">Age Categories</h3>
-				<ul>
-					{#each newComp.ageCategories as category}
-						<li class="list-disc list-inside text-sm">{category}</li>
-					{/each}
-				</ul>
-			</section>
-		</div>
-	{/each}
+	{#await compPromise then competitions}
+		{#each competitions.documents as competition}
+			<a href="/competitions/{competition.$id}">
+				<div class="card overflow-hidden relative h-52 mb-3">
+					<img src={competition.imgUrl} alt="" class="z-0" />
+					<div
+						class="absolute top-0 bottom-0 left-0 right-0 bg-gradient-to-b from-white/0 to-gray-700/100 text-white p-4 flex flex-col justify-end"
+					>
+						<h1 class="font-bold text-xl">{competition.name}</h1>
+						<h2>{competition.organization}</h2>
+					</div>
+				</div>
+			</a>
+		{/each}
+	{/await}
 </div>
