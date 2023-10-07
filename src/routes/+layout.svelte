@@ -1,6 +1,12 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, Modal, Toast, type ModalComponent } from '@skeletonlabs/skeleton';
+	import {
+		AppShell,
+		Modal,
+		Toast,
+		type ModalComponent,
+		ProgressRadial
+	} from '@skeletonlabs/skeleton';
 	import { initializeStores } from '@skeletonlabs/skeleton';
 
 	// Floating UI for Popups
@@ -11,6 +17,7 @@
 	import TabNav from '$lib/components/TabNav.svelte';
 	import { pageScrollStore } from '$lib/stores/pageScroll.store';
 	import ModalSelectList from '$lib/components/ModalSelectList.svelte';
+	import { user } from '$lib/stores/user.store';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -37,12 +44,19 @@
 <Toast />
 
 <!-- App Shell -->
-<Auth>
-	<AppShell regionPage="no-scrollbar" on:scroll={onPageScroll}>
-		<!-- Page Route Content -->
-		<slot />
-		<svelte:fragment slot="footer">
-			<TabNav />
-		</svelte:fragment>
-	</AppShell>
-</Auth>
+
+{#if $user !== undefined}
+	<Auth>
+		<AppShell regionPage="no-scrollbar" on:scroll={onPageScroll}>
+			<!-- Page Route Content -->
+			<slot />
+			<svelte:fragment slot="footer">
+				<TabNav />
+			</svelte:fragment>
+		</AppShell>
+	</Auth>
+{:else}
+	<div class="h-screen flex justify-center items-center">
+		<ProgressRadial stroke={100} meter="stroke-primary-500" track="stroke-primary-500/30" />
+	</div>
+{/if}

@@ -9,11 +9,22 @@ interface AppwriteUser {
 }
 
 function createUser() {
-	const user = writable<AppwriteUser | null>(null);
+	const user = writable<AppwriteUser | null | undefined>();
 
 	async function init() {
-		const restoredAccount = await account.get();
-		const restoredSession = await account.getSession('current');
+		let restoredSession = null;
+		let restoredAccount = null;
+
+		try {
+			restoredSession = await account.getSession('current');
+			restoredAccount = await account.get();
+		} catch (error) {
+			if (error instanceof AppwriteException && error.code !== 401) {
+				console.log(error);
+			}
+			user.set(null);
+			return;
+		}
 
 		user.set({
 			account: restoredAccount,
@@ -75,11 +86,22 @@ function createUser() {
 		user.set(null);
 	}
 
+	function getValue(): AppwriteUser | null {
+		let value = null;
+		const unsubscribe = user.subscribe((userData) => {
+			value = userData;
+			unsubscribe();
+		});
+
+		return value;
+	}
+
 	return {
 		...user,
 		login,
 		singUp,
-		logout
+		logout,
+		getValue
 	};
 }
 

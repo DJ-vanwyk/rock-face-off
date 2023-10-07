@@ -1,7 +1,5 @@
 <script lang="ts">
-	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Icon from '@iconify/svelte';
-	import { AppBar } from '@skeletonlabs/skeleton';
 
 	export let data: any;
 
@@ -17,7 +15,7 @@
 <div class="p-4">
 	<h1 class="text-2xl font-bold">{competition.name}</h1>
 	<h2 class="mb-3">{competition.organization}</h2>
-	<a href={`${competition.id}/enter`} class="btn variant-filled-primary w-full mb-6">Enter Now</a>
+	<a href={`${competition.$id}/enter`} class="btn variant-filled-primary w-full mb-6">Enter Now</a>
 	<p class="mb-6 text-sm">{competition.description}</p>
 	<h3 class="font-bold mb-2">Detail:</h3>
 

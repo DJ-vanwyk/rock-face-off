@@ -1,0 +1,109 @@
+<script lang="ts">
+	import Restricted from '$lib/components/auth/Restricted.svelte';
+	import Icon from '@iconify/svelte';
+	import type { PageData } from './$types';
+	import { authPageStore } from '$lib/stores/authPage.store';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { databases } from '$lib/appwrite';
+	import { ID, Query } from 'appwrite';
+	import { user } from '$lib/stores/user.store';
+
+	export let data: PageData;
+
+	let ageCategoryValue = data.ageCategories[0].$id;
+	let genderCategoryValue = data.genderCategories[0].$id;
+
+	function onLogin() {
+		$authPageStore = 'login';
+	}
+
+	async function onRegister() {
+		if ($user?.account.$id) {
+			const entriesList = await databases.listDocuments(
+				'652128d14c078883668a',
+				'65213e03b1f3ab84700f',
+				[Query.equal('userId', $user.account.$id), Query.equal('competition', data.id)]
+			);
+
+			console.log(entriesList);
+
+			if (entriesList.total == 0) {
+				await databases.createDocument(
+					'652128d14c078883668a',
+					'65213e03b1f3ab84700f',
+					ID.unique(),
+					{
+						userId: $user?.account.$id,
+						competition: data.id,
+						ageCategory: ageCategoryValue,
+						genderCategory: genderCategoryValue
+					}
+				);
+			} else {
+				alert('User Already entered');
+			}
+		}
+	}
+</script>
+
+<Restricted>
+	<PageHeader>
+		<a href={`/competitions/${data.id}`} class="btn btn-sm">
+			<Icon icon="ion:chevron-back" />
+			<span>Back</span>
+		</a>
+		<h1 class="text-2xl">Competition Registration</h1>
+		<p class="mt-4 text-sm">Please fill in the below information to register of the competition</p>
+	</PageHeader>
+
+	<div class="p-4">
+		<form>
+			<label class="label mb-4" for="ageCatogory">
+				<span>Gender Category</span>
+				<RadioGroup display="flex-col" rounded="rounded-container-token" regionLabel="!text-left">
+					{#each data.genderCategories as genderCategory}
+						<RadioItem
+							bind:group={genderCategoryValue}
+							name={genderCategory.$id}
+							value={genderCategory.$id}
+							class="!text-left"
+						>
+							<span class="!text-left w-full">{genderCategory.name}</span>
+						</RadioItem>
+					{/each}
+				</RadioGroup>
+			</label>
+			<label class="label mb-4" for="ageCatogory">
+				<span>Age Category</span>
+				<RadioGroup display="flex-col" rounded="rounded-container-token" regionLabel="!text-left">
+					{#each data.ageCategories as ageCategory}
+						<RadioItem
+							bind:group={ageCategoryValue}
+							name={ageCategory.$id}
+							value={ageCategory.$id}
+							class="!text-left"
+						>
+							<span class="!text-left w-full">{ageCategory.name}</span>
+						</RadioItem>
+					{/each}
+				</RadioGroup>
+			</label>
+		</form>
+
+		<button class="btn variant-filled-primary w-full" on:click|preventDefault={onRegister}
+			>Register</button
+		>
+	</div>
+
+	<svelte:fragment slot="noUser">
+		<div class="h-full flex flex-col justify-center items-center p-6 text-center gap-5 relative">
+			<a href={`/competitions/${data.id}`} class="btn absolute top-4 left-3 btn-sm">
+				<Icon icon="ion:chevron-back" />
+				<span>Back</span>
+			</a>
+			<p>Please login in order to enter the competition.</p>
+			<button on:click={onLogin} class="btn variant-filled-primary">Login</button>
+		</div>
+	</svelte:fragment>
+</Restricted>
