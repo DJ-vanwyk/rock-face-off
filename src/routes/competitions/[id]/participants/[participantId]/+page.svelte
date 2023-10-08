@@ -9,8 +9,6 @@
 
 	export let data: PageData;
 
-	console.log(data);
-
 	function onRoundStart(roundId: string) {
 		if ($user) {
 			databases.createDocument(

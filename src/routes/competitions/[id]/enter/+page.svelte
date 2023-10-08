@@ -10,6 +10,7 @@
 	import { user } from '$lib/stores/user.store';
 	import LoadingBtn from '$lib/components/LoadingBtn.svelte';
 	import { goto } from '$app/navigation';
+	import { loadErrorStore } from '$lib/stores/loadErrors.store';
 
 	export let data: PageData;
 

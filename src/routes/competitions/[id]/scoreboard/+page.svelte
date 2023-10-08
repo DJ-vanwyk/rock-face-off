@@ -17,6 +17,11 @@
 	import { onMount } from 'svelte';
 	import type { Competition } from '../../new/types';
 	import { selectedComp } from '$lib/stores/selectedComp.store';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
+	console.log(data);
 
 	$: console.log($page.params.id);
 
@@ -124,7 +129,7 @@
 				</a>
 			</svelte:fragment>
 			<h2 class="text-center text-xs uppercase font-mono tracking-wider">Scoreboard</h2>
-			<h1 class="text-center w-max font-bold text-primary-500">{comp?.name}</h1>
+			<h1 class="text-center w-max font-bold text-primary-500">{data.competition.name}</h1>
 			<svelte:fragment slot="trail"><Icon icon="ion:search" class="text-2xl" /></svelte:fragment>
 			<svelte:fragment slot="headline">
 				<div class="flex gap-2 items-center justify-center flex-wrap">
@@ -158,7 +163,7 @@
 		<span> Back</span>
 	</a>
 	<h2 class="uppercase font-mono tracking-wider">Scoreboard</h2>
-	<h1 class="text-3xl font-bold text-primary-500">{comp?.name}</h1>
+	<h1 class="text-3xl font-bold text-primary-500">{data.competition.name}</h1>
 	<div class="flex gap-2 items-center mt-4 flex-wrap">
 		<IconSelectChip
 			icon="ion:reload"

@@ -14,14 +14,13 @@
 	rounded=""
 	class="bg-surface-50 w-full"
 >
-	<TabAnchor href="/" selected={$page.url.pathname === '/'}>
+	<!-- <TabAnchor href="/" selected={$page.url.pathname === '/'}>
 		<svelte:fragment slot="lead">
 			<div class="flex justify-center pt-1">
 				<Icon icon="ion:home" class="text-2xl text-center" />
 			</div>
 		</svelte:fragment>
-		<!-- <span class="text-xs">Home</span> -->
-	</TabAnchor>
+	</TabAnchor> -->
 	<TabAnchor href="/competitions" selected={$page.url.pathname === '/competitions'}>
 		<svelte:fragment slot="lead">
 			<div class="flex justify-center pt-1">
@@ -30,16 +29,15 @@
 		</svelte:fragment>
 		<!-- <span class="text-xs">Comps</span> -->
 	</TabAnchor>
-	<Restricted>
+	<!-- <Restricted>
 		<TabAnchor href="/competitions/new" selected={$page.url.pathname === '/competitions/new'}>
 			<svelte:fragment slot="lead">
 				<div class="flex justify-center pt-1">
 					<Icon icon="ion:add-sharp" class="text-2xl text-center" />
 				</div>
 			</svelte:fragment>
-			<!-- <span class="text-xs">Gyms</span> -->
 		</TabAnchor>
-	</Restricted>
+	</Restricted> -->
 
 	<TabAnchor href="/profile" selected={$page.url.pathname === '/profile'}>
 		<svelte:fragment slot="lead">

@@ -19,6 +19,7 @@
 	import ModalSelectList from '$lib/components/ModalSelectList.svelte';
 	import { user } from '$lib/stores/user.store';
 	import { navigating } from '$app/stores';
+	import { loadErrorStore } from '$lib/stores/loadErrors.store';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -54,6 +55,14 @@
 			{#if $navigating}
 				<div class="h-screen flex justify-center items-center">
 					<ProgressRadial stroke={100} meter="stroke-primary-500" track="stroke-primary-500/30" />
+				</div>
+			{:else if $loadErrorStore.length > 0}
+				<div class="h-screen flex justify-center items-center">
+					<ProgressRadial
+						stroke={100}
+						meter="stroke-secondary-500"
+						track="stroke-secondary-500/30"
+					/>
 				</div>
 			{:else}
 				<slot />

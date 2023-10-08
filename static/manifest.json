@@ -1,7 +1,7 @@
 {
 	"short_name": "Rock Face Off",
 	"name": "Rock Face Off",
-	"start_url": "/",
+	"start_url": "/competitions",
 	"icons": [
 		{
 			"src": "windows11/SmallTile.scale-100.png",
