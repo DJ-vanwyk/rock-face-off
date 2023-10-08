@@ -42,7 +42,7 @@ export const load = (async ({ params }) => {
 
 	return {
 		round,
-		score,
+		score: score?.documents[0],
 		competition
 	};
 }) satisfies PageLoad;

@@ -35,7 +35,10 @@
 					status: 'active',
 					startTime: new Date(),
 					roundId: roundId,
-					participantId: data.participantId
+					participantId: data.participantId,
+					ageCategoryId: data.ageCategory.$id,
+					genderCategoryId: data.genderCategory.$id,
+					competitionParticipant: data.participantId
 				},
 				[
 					Permission.read(Role.any()),
@@ -116,6 +119,7 @@
 							>{round.score ? new Date(round.score.startTime).toLocaleString() : '-'}</td
 						>
 					</tr>
+					improvements
 					<tr>
 						<td class="text-surface-800">Session End</td>
 						<td class="text-right">{round.score ? round.score.endTime ?? '-' : '-'}</td>
@@ -141,7 +145,10 @@
 						on:click={() => onRoundStart(round.$id)}>View Round</button
 					>
 				{/if}
-				<button class="btn btn-sm variant-filled-secondary w-full">View Scores</button>
+				<a
+					href={`/competitions/${data.competition.$id}/scoreboard?round=${round.$id}&category=${data.ageCategory.$id}&gender=${data.genderCategory.$id}`}
+					class="btn btn-sm variant-filled-secondary w-full">View Scores</a
+				>
 			</footer>
 		</div>
 	{/each}

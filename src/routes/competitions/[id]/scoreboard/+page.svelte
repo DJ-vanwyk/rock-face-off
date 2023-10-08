@@ -18,49 +18,22 @@
 	import type { Competition } from '../../new/types';
 	import { selectedComp } from '$lib/stores/selectedComp.store';
 	import type { PageData } from './$types';
+	import { client, databases, db } from '$lib/appwrite';
+	import { Query } from 'appwrite';
 
 	export let data: PageData;
 
 	console.log(data);
 
-	$: console.log($page.params.id);
-
 	/* ---------------------------------- Data ---------------------------------- */
 
-	const sourceData = [
-		{ position: 1, name: 'DJ van Wyk', weight: 420, symbol: 'H' },
-		{ position: 2, name: 'Loan van der Merwe', weight: 390, symbol: 'He' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' },
-		{ position: 3, name: 'Cerin Bouwer', weight: 350, symbol: 'Li' }
-	];
+	let sourceData: any = [];
 
 	const tableSimple: TableSource = {
 		// A list of heading labels.
 		head: [],
 		// The data visibly shown in your table body UI.
-		body: tableMapperValues(sourceData, ['position', 'name', 'weight'])
+		body: tableMapperValues(sourceData, ['position', 'competitionParticipant.name', 'totalScore'])
 	};
 
 	/* ------------------------------ Filter prompt ----------------------------- */
@@ -72,46 +45,79 @@
 	$: console.log($selectedComp);
 
 	/* --------------------------------- Filters -------------------------------- */
-	const roundOptions = ['Qualifiers', 'Semi-Final', 'Final'];
-	const categoryOptions = [
-		'Serious Potential',
-		'Weekend Warriors',
-		'Intermediate',
-		'Junior',
-		'Babies'
-	];
-	const genderOptions = ['Male', 'Female'];
+	const roundOptions = data.rounds?.documents;
+	const categoryOptions = data.ageCategories?.documents;
+	const genderOptions = data.genderCategories?.documents;
 
-	let round: string;
-	let category: string;
-	let gender: string;
+	let round: string = $page.url.searchParams.get('round') ?? '';
+	let category: string = $page.url.searchParams.get('category') ?? '';
+	let gender: string = $page.url.searchParams.get('gender') ?? '';
+
+	let unSubscribe: any = null;
+
+	console.log($page);
 
 	$: {
-		// console.log('Change');
-		// if (unSub) {
-		// 	unSub();
-		// }
-		// if (round && category && gender) {
-		// 	unSub = onSnapshot(
-		// 		query(
-		// 			collection(db, 'competitions', $page.params.id, 'rounds'),
-		// 			and(where('round', '==', round), where('gender', '==', gender))
-		// 		),
-		// 		(docs) => {
-		// 			docs.forEach((doc) => console.log(doc.data()));
-		// 		}
-		// 	);
-		// }
-	}
-	/* ------------------------------------ - ----------------------------------- */
+		// $page.url.searchParams.set('round', round);
+		// $page.url.searchParams.set('category', category);
+		// $page.url.searchParams.set('gender', gender);
 
-	async function getComp() {
-		// if (history.state['competition']) {
-		// 	return history.state['competition'];
-		// } else {
-		// 	return (await getDoc(doc(db, 'competitions', $page.params.id))).data();
-		// }
+		let newUrl =
+			window.location.protocol +
+			'//' +
+			window.location.host +
+			window.location.pathname +
+			`?round=${round}&category=${category}&gender=${gender}`;
+		window.history.replaceState({ path: newUrl }, '', newUrl);
+
+		if (round && category && gender) {
+			realTime(round, gender, category);
+		}
 	}
+
+	function realTime(round: string, gender: string, category: string) {
+		databases
+			.listDocuments(db, 'competition_scores', [
+				Query.equal('roundId', round),
+				Query.equal('ageCategoryId', category),
+				Query.equal('genderCategoryId', gender),
+				Query.orderDesc('totalScore')
+			])
+			.then((resp) => {
+				sourceData = resp.documents;
+				if (unSubscribe) {
+					unSubscribe();
+				}
+
+				unSubscribe = client.subscribe(
+					['databases.rock_face_off.collections.competition_scores.documents'],
+					(event) => {
+						const payload: any = event.payload;
+						if (
+							payload.genderCategoryId === gender &&
+							payload.ageCategoryId === category &&
+							payload.roundId === round
+						) {
+							// console.log(event);
+
+							const index = sourceData.findIndex((el: any) => el.$id == payload.$id);
+
+							if (index > 0) {
+								console.log('Found');
+								sourceData[index].totalScore = payload.totalScore;
+								// sourceData = sourceData.sort((a: any, b: any) => b.totalScore - a.totalScore);
+							}
+
+							// console.log(sourceData);
+
+							console.log(sourceData);
+						}
+					}
+				);
+			});
+	}
+
+	/* ------------------------------------ - ----------------------------------- */
 </script>
 
 <PageHeader>
@@ -129,7 +135,7 @@
 				</a>
 			</svelte:fragment>
 			<h2 class="text-center text-xs uppercase font-mono tracking-wider">Scoreboard</h2>
-			<h1 class="text-center w-max font-bold text-primary-500">{data.competition.name}</h1>
+			<h1 class="text-center w-max font-bold text-primary-500">{data.competition?.name}</h1>
 			<svelte:fragment slot="trail"><Icon icon="ion:search" class="text-2xl" /></svelte:fragment>
 			<svelte:fragment slot="headline">
 				<div class="flex gap-2 items-center justify-center flex-wrap">
@@ -138,6 +144,8 @@
 						options={roundOptions}
 						modalTitle="Select Round"
 						bind:value={round}
+						dataLabel="name"
+						dataValue="$id"
 					/>
 					|
 					<IconSelectChip
@@ -163,13 +171,15 @@
 		<span> Back</span>
 	</a>
 	<h2 class="uppercase font-mono tracking-wider">Scoreboard</h2>
-	<h1 class="text-3xl font-bold text-primary-500">{data.competition.name}</h1>
+	<h1 class="text-3xl font-bold text-primary-500">{data.competition?.name}</h1>
 	<div class="flex gap-2 items-center mt-4 flex-wrap">
 		<IconSelectChip
 			icon="ion:reload"
 			options={roundOptions}
 			modalTitle="Select Round"
 			bind:value={round}
+			dataLabel="name"
+			dataValue="$id"
 		/>
 		|
 		<IconSelectChip
@@ -177,6 +187,8 @@
 			options={categoryOptions}
 			modalTitle="Select Category"
 			bind:value={category}
+			dataLabel="name"
+			dataValue="$id"
 		/>
 		|
 		<IconSelectChip
@@ -184,8 +196,35 @@
 			options={genderOptions}
 			modalTitle="Select Gender"
 			bind:value={gender}
+			dataLabel="name"
+			dataValue="$id"
 		/>
 	</div>
 </PageHeader>
 
-<Table class="mt-4 rounded-none" source={tableSimple} element="table rounded-none" />
+<div class="table-container mt-2">
+	<!-- Native Table Element -->
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Name</th>
+				<th>Score</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#if sourceData.length > 0}
+				{#each sourceData as row, i}
+					<tr>
+						<td>{i + 1}</td>
+						<td>{row.competitionParticipant.displayName}</td>
+						<td>{row.totalScore}</td>
+					</tr>
+				{/each}
+			{/if}
+		</tbody>
+	</table>
+</div>
+{#if sourceData.length == 0}
+	<p class="p-6 text-center">No results yet.</p>
+{/if}

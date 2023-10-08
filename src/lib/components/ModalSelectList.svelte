@@ -31,7 +31,14 @@
 		<section class="m-4 max-h-96 overflow-auto">
 			<ListBox>
 				{#each $modalStore[0].meta.options as option}
-					<ListBoxItem bind:group={valueSingle} name="medium" value={option}>{option}</ListBoxItem>
+					<ListBoxItem
+						bind:group={valueSingle}
+						name="medium"
+						value={$modalStore[0].meta.dataValue ? option[$modalStore[0].meta.dataValue] : option}
+						>{$modalStore[0].meta.dataLabel
+							? option[$modalStore[0].meta.dataLabel]
+							: option}</ListBoxItem
+					>
 				{/each}
 			</ListBox>
 		</section>

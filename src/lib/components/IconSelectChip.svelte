@@ -7,6 +7,13 @@
 	export let modalTitle = '';
 	export let value: any = '';
 
+	export let dataValue: string = '';
+	export let dataLabel: string = '';
+
+	let displayLabel: any = dataLabel
+		? options.find((el) => el[dataValue] == value)[dataLabel]
+		: value;
+
 	const modalStore = getModalStore();
 
 	const onClick = (e: any) => {
@@ -17,11 +24,19 @@
 			value,
 			component: 'selectComponent',
 			meta: {
-				options
+				options,
+				dataLabel,
+				dataValue
 			},
 			response: (val) => {
 				if (val || val.role === 'ok') {
 					value = val.data;
+
+					if (dataValue) {
+						displayLabel = options.find((el) => el[dataValue] == val.data)[dataLabel];
+					} else {
+						displayLabel = value;
+					}
 				}
 			}
 		};
@@ -32,5 +47,7 @@
 
 <div class="flex items-center gap-1">
 	<Icon {icon} class="text-2xl" />
-	<button on:click={onClick} class="chip variant-filled rounded-full">{value ?? 'Select'}</button>
+	<button on:click={onClick} class="chip variant-filled rounded-full"
+		>{displayLabel ?? 'Select'}</button
+	>
 </div>
