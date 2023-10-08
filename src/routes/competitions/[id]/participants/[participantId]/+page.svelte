@@ -2,16 +2,30 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
-	import { Avatar } from '@skeletonlabs/skeleton';
+	import { Avatar, getModalStore } from '@skeletonlabs/skeleton';
 	import { databases, db } from '$lib/appwrite';
 	import { ID, Permission, Role } from 'appwrite';
 	import { user } from '$lib/stores/user.store';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
+	const modalStore = getModalStore();
+
 	function onRoundStart(roundId: string) {
+		modalStore.trigger({
+			type: 'confirm',
+			title: 'Start Round',
+			body: 'Your are about to start this round. Once started your time begins and can not be stopped!',
+
+			buttonTextConfirm: 'Lets Go!',
+			response: (r: any) => (r ? startRound(roundId) : '')
+		});
+	}
+
+	async function startRound(roundId: string) {
 		if ($user) {
-			databases.createDocument(
+			const resp = await databases.createDocument(
 				db,
 				'competition_scores',
 				ID.unique(),
@@ -29,6 +43,8 @@
 					Permission.delete(Role.user($user?.account.$id))
 				]
 			);
+
+			goto(`${data.participantId}/rounds/${roundId}`);
 		}
 	}
 </script>
@@ -113,10 +129,12 @@
 						on:click={() => onRoundStart(round.$id)}>Start Round</button
 					>
 				{:else if round.score.status === 'active'}
-					<button
+					<a
+						href={`${data.participantId}/rounds/${round.$id}`}
 						class="btn btn-sm variant-filled-tertiary w-full"
-						on:click={() => onRoundStart(round.$id)}>Continue Round</button
 					>
+						Continue Round
+					</a>
 				{:else}
 					<button
 						class="btn btn-sm variant-filled-surface w-full"
