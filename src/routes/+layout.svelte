@@ -66,7 +66,7 @@
 				<div class=" p-4">
 					<div class="flex items-center justify-between mb-4">
 						<h1 class="text-error-500 text-4xl font-bold">Error</h1>
-						<button class="btn-icon variant-filled-secondary">
+						<button class="btn-icon variant-filled-secondary" on:click={() => location.reload()}>
 							<Icon icon="ion:reload" class="text-2xl" />
 						</button>
 					</div>
