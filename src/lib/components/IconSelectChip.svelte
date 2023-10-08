@@ -10,9 +10,15 @@
 	export let dataValue: string = '';
 	export let dataLabel: string = '';
 
-	let displayLabel: any = dataLabel
-		? options.find((el) => el[dataValue] == value)[dataLabel]
-		: value;
+	let displayLabel: any = getDisplayLabel();
+
+	function getDisplayLabel() {
+		if (value) {
+			return dataLabel ? options.find((el) => el[dataValue] === value)[dataLabel] : value;
+		} else {
+			return 'Select';
+		}
+	}
 
 	const modalStore = getModalStore();
 

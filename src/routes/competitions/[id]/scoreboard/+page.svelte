@@ -42,8 +42,6 @@
 
 	let comp: Competition;
 
-	$: console.log($selectedComp);
-
 	/* --------------------------------- Filters -------------------------------- */
 	const roundOptions = data.rounds?.documents;
 	const categoryOptions = data.ageCategories?.documents;
@@ -54,8 +52,6 @@
 	let gender: string = $page.url.searchParams.get('gender') ?? '';
 
 	let unSubscribe: any = null;
-
-	console.log($page);
 
 	$: {
 		// $page.url.searchParams.set('round', round);
@@ -98,19 +94,21 @@
 							payload.ageCategoryId === category &&
 							payload.roundId === round
 						) {
-							// console.log(event);
-
 							const index = sourceData.findIndex((el: any) => el.$id == payload.$id);
 
-							if (index > 0) {
-								console.log('Found');
-								sourceData[index].totalScore = payload.totalScore;
-								// sourceData = sourceData.sort((a: any, b: any) => b.totalScore - a.totalScore);
+							if (index >= 0) {
+								const newSourceData = structuredClone(sourceData);
+								newSourceData[index].totalScore = payload.totalScore;
+								sourceData = newSourceData.sort((a: any, b: any) => {
+									return b.totalScore - a.totalScore;
+								});
+							} else {
+								const newSourceData = structuredClone(sourceData);
+								newSourceData.push(payload);
+								sourceData = newSourceData.sort((a: any, b: any) => {
+									return b.totalScore - a.totalScore;
+								});
 							}
-
-							// console.log(sourceData);
-
-							console.log(sourceData);
 						}
 					}
 				);
@@ -153,6 +151,8 @@
 						options={categoryOptions}
 						modalTitle="Select Category"
 						bind:value={category}
+						dataLabel="name"
+						dataValue="$id"
 					/>
 					|
 					<IconSelectChip
@@ -160,6 +160,8 @@
 						options={genderOptions}
 						modalTitle="Select Gender"
 						bind:value={gender}
+						dataLabel="name"
+						dataValue="$id"
 					/>
 				</div>
 			</svelte:fragment>
