@@ -3,7 +3,7 @@
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
 	import { Avatar } from '@skeletonlabs/skeleton';
-	import { databases } from '$lib/appwrite';
+	import { databases, db } from '$lib/appwrite';
 	import { ID, Permission, Role } from 'appwrite';
 	import { user } from '$lib/stores/user.store';
 
@@ -12,16 +12,16 @@
 	function onRoundStart(roundId: string) {
 		if ($user) {
 			databases.createDocument(
-				'652128d14c078883668a',
-				'65213f2b9b700d69e385',
+				db,
+				'competition_scores',
 				ID.unique(),
 				{
 					scores: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 					totalScore: 0,
 					status: 'active',
 					startTime: new Date(),
-					round: roundId,
-					participant: data.participantId
+					roundId: roundId,
+					participantId: data.participantId
 				},
 				[
 					Permission.read(Role.any()),

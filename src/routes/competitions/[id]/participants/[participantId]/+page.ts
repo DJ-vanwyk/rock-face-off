@@ -1,17 +1,17 @@
-import { databases } from '$lib/appwrite';
+import { databases, db } from '$lib/appwrite';
 import { Query } from 'appwrite';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ params }) => {
 	// Initial Data
 	const respArr = await Promise.all([
-		databases.listDocuments('652128d14c078883668a', '65213d72bf27fad7aa36', [
-			Query.equal('competition', params.id),
+		databases.listDocuments(db, 'competition_rounds', [
+			Query.equal('competitionId', params.id),
 			Query.orderAsc('order')
 		]),
 
-		databases.getDocument('652128d14c078883668a', '652128f4e9f8b22fefbe', params.id),
-		databases.getDocument('652128d14c078883668a', '65213e03b1f3ab84700f', params.participantId)
+		databases.getDocument(db, 'competitions', params.id),
+		databases.getDocument(db, 'competition_participants', params.participantId)
 	]);
 
 	const rounds = respArr[0];
@@ -20,12 +20,8 @@ export const load = (async ({ params }) => {
 
 	// Fetches Participant data
 	const respArr2 = await Promise.all([
-		databases.getDocument('652128d14c078883668a', '65213e43be9d7c4c9c7b', participant.ageCategory),
-		databases.getDocument(
-			'652128d14c078883668a',
-			'65213e81a6d20b49d5c6',
-			participant.genderCategory
-		)
+		databases.getDocument(db, 'competition_age_categories', participant.ageCategoryId),
+		databases.getDocument(db, 'competition_gender_categories', participant.genderCategoryId)
 	]);
 
 	const ageCategory = respArr2[0];
@@ -37,9 +33,9 @@ export const load = (async ({ params }) => {
 			...round,
 			score:
 				(
-					await databases.listDocuments('652128d14c078883668a', '65213f2b9b700d69e385', [
-						Query.equal('participant', params.participantId),
-						Query.equal('round', round.$id)
+					await databases.listDocuments(db, 'competition_scores', [
+						Query.equal('participantId', params.participantId),
+						Query.equal('roundId', round.$id)
 					])
 				).documents[0] ?? null
 		}))

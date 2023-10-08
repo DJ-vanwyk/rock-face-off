@@ -5,7 +5,7 @@
 	import { AppBar } from '@skeletonlabs/skeleton';
 	import type { Competition } from './new/types';
 	import { goto } from '$app/navigation';
-	import { databases } from '$lib/appwrite';
+	import { databases, db } from '$lib/appwrite';
 
 	function onCompClick(comp: Competition) {
 		goto(`/competitions/${comp.id}`, {
@@ -15,7 +15,7 @@
 		});
 	}
 
-	let compPromise = databases.listDocuments('652128d14c078883668a', '652128f4e9f8b22fefbe', []);
+	let compPromise = databases.listDocuments(db, 'competitions', []);
 </script>
 
 <PageHeader>

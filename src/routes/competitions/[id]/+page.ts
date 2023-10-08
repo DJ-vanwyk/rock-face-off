@@ -1,4 +1,4 @@
-import { databases } from '$lib/appwrite';
+import { databases, db } from '$lib/appwrite';
 import { Query } from 'appwrite';
 
 export async function load({ params }) {
@@ -9,11 +9,9 @@ export async function load({ params }) {
 	// Get Competition
 
 	const [compResult, roundsResult] = await Promise.allSettled([
-		databases.getDocument('652128d14c078883668a', '652128f4e9f8b22fefbe', params.id),
+		databases.getDocument(db, 'competitions', params.id),
 
-		databases.listDocuments('652128d14c078883668a', '65213d72bf27fad7aa36', [
-			Query.equal('competition', params.id)
-		])
+		databases.listDocuments(db, 'competition_rounds', [Query.equal('competitionId', params.id)])
 	]);
 
 	if (compResult.status === 'fulfilled') {

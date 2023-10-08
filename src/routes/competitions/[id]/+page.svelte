@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { databases } from '$lib/appwrite';
+	import { databases, db } from '$lib/appwrite';
 	import { user } from '$lib/stores/user.store';
 	import Icon from '@iconify/svelte';
 	import { Query } from 'appwrite';
@@ -15,9 +15,9 @@
 	async function checkEntry() {
 		if ($user) {
 			try {
-				const resp = await databases.listDocuments('652128d14c078883668a', '65213e03b1f3ab84700f', [
+				const resp = await databases.listDocuments(db, 'competition_participants', [
 					Query.equal('userId', $user?.account.$id),
-					Query.equal('competition', competition.$id)
+					Query.equal('competitionId', competition.$id)
 				]);
 
 				if (resp.total !== 0) {

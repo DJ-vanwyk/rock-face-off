@@ -5,7 +5,7 @@
 	import { authPageStore } from '$lib/stores/authPage.store';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import { RadioGroup, RadioItem, getModalStore } from '@skeletonlabs/skeleton';
-	import { databases } from '$lib/appwrite';
+	import { databases, db } from '$lib/appwrite';
 	import { ID, Query } from 'appwrite';
 	import { user } from '$lib/stores/user.store';
 	import LoadingBtn from '$lib/components/LoadingBtn.svelte';
@@ -39,27 +39,21 @@
 	async function enterComp() {
 		disabled = true;
 		if ($user?.account.$id) {
-			const entriesList = await databases.listDocuments(
-				'652128d14c078883668a',
-				'65213e03b1f3ab84700f',
-				[Query.equal('userId', $user.account.$id), Query.equal('competition', data.id)]
-			);
+			const entriesList = await databases.listDocuments(db, 'competition_participants', [
+				Query.equal('userId', $user.account.$id),
+				Query.equal('competitionId', data.id)
+			]);
 
 			console.log(entriesList);
 
 			if (entriesList.total == 0) {
-				const doc = await databases.createDocument(
-					'652128d14c078883668a',
-					'65213e03b1f3ab84700f',
-					ID.unique(),
-					{
-						userId: $user?.account.$id,
-						competition: data.id,
-						ageCategory: ageCategoryValue,
-						genderCategory: genderCategoryValue,
-						displayName: $user.account.name
-					}
-				);
+				const doc = await databases.createDocument(db, 'competition_participants', ID.unique(), {
+					userId: $user?.account.$id,
+					competitionId: data.id,
+					ageCategoryId: ageCategoryValue,
+					genderCategoryId: genderCategoryValue,
+					displayName: $user.account.name
+				});
 				goto(`/competitions/${data.id}/participants/${doc.$id}`);
 			} else {
 				alert('User Already entered');
