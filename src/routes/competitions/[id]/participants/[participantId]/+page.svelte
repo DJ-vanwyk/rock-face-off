@@ -119,7 +119,6 @@
 							>{round.score ? new Date(round.score.startTime).toLocaleString() : '-'}</td
 						>
 					</tr>
-					improvements
 					<tr>
 						<td class="text-surface-800">Session End</td>
 						<td class="text-right">{round.score ? round.score.endTime ?? '-' : '-'}</td>
