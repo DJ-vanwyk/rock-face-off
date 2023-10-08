@@ -20,6 +20,8 @@
 	import { user } from '$lib/stores/user.store';
 	import { navigating } from '$app/stores';
 	import { loadErrorStore } from '$lib/stores/loadErrors.store';
+	import Icon from '@iconify/svelte';
+	import { AppwriteException } from 'appwrite';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -37,6 +39,10 @@
 	// Capture scroll event
 	function onPageScroll(e: Event) {
 		$pageScrollStore = (e.target as HTMLDivElement).scrollTop;
+	}
+
+	$: if ($loadErrorStore.length > 0) {
+		console.log($loadErrorStore);
 	}
 </script>
 
@@ -57,12 +63,22 @@
 					<ProgressRadial stroke={100} meter="stroke-primary-500" track="stroke-primary-500/30" />
 				</div>
 			{:else if $loadErrorStore.length > 0}
-				<div class="h-screen flex justify-center items-center">
-					<ProgressRadial
-						stroke={100}
-						meter="stroke-secondary-500"
-						track="stroke-secondary-500/30"
-					/>
+				<div class=" p-4">
+					<div class="flex items-center justify-between mb-4">
+						<h1 class="text-error-500 text-4xl font-bold">Error</h1>
+						<button class="btn-icon variant-filled-secondary">
+							<Icon icon="ion:reload" class="text-2xl" />
+						</button>
+					</div>
+					{#each $loadErrorStore as error}
+						<div class="card variant-soft-error p-4 mb-2">
+							{#if error instanceof AppwriteException}
+								{error.stack}
+							{:else}
+								{error}
+							{/if}
+						</div>
+					{/each}
 				</div>
 			{:else}
 				<slot />

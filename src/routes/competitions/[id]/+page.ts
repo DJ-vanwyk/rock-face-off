@@ -1,7 +1,9 @@
 import { databases, db } from '$lib/appwrite';
+import { loadErrorStore } from '$lib/stores/loadErrors.store.js';
 import { Query } from 'appwrite';
 
 export async function load({ params }) {
+	loadErrorStore.set([]);
 	let competition = undefined;
 	let rounds;
 	let error = [];
@@ -10,7 +12,6 @@ export async function load({ params }) {
 
 	const [compResult, roundsResult] = await Promise.allSettled([
 		databases.getDocument(db, 'competitions', params.id),
-
 		databases.listDocuments(db, 'competition_rounds', [Query.equal('competitionId', params.id)])
 	]);
 
@@ -29,6 +30,8 @@ export async function load({ params }) {
 	}
 
 	// Get User Entry
+
+	loadErrorStore.set(error);
 
 	return {
 		competition: competition,
